@@ -8,13 +8,13 @@ headers = {
     'Content-Type': 'application/json',
 }
 
-def chat(query):
+def chat(query, user_id, conversation_id):
     data = {
         "inputs": {},
         "query": query,
         "response_mode": "blocking",
-        "conversation_id": "",
-        "user": "crhnf549",
+        "conversation_id": conversation_id,
+        "user": user_id,
         "files": [
             {
                 "type": "",
@@ -25,10 +25,15 @@ def chat(query):
     }
 
     response = requests.post('http://52.195.234.150/v1/chat-messages', headers=headers, json=data)
-    print(response)
+    #print(response.text)
+    
     # JSON文字列をPython辞書に変換
     res_text = json.loads(response.text)
+    conversation_id = res_text["conversation_id"]
     answer = res_text["answer"]
+    #metadata = conversation_id = res_text["metadata"]
+    #print(metadata)
+    
     # 'answer'キーの値を取得して表示
-    print(answer)
-    return answer
+    print(answer, conversation_id)
+    return answer, conversation_id
