@@ -36,18 +36,62 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global history
+
     # ユーザーからのメッセージテキストを取得
     user_message = event.message.text
-    print(user_message)
-    # ここで何らかの処理を行う
-    # ...
+    
+    # ユーザーIDを取得してコンソールに出力
+    user_id = event.source.user_id
+    print(f"User {user_id}:", user_message)
 
-    response = chat(user_message)
-    # LINEに応答メッセージを送信
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text = response)
-    )
+    existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
+    
+    answer, conversation_id = chat(user_message, user_id, existing_data["id"])
+
+    history, new_conversation = update_history(history, user_id, conversation_id)
+    
+    if new_conversation:
+        # LINEに応答メッセージを送信
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text = answer + "\n\nそろそろ新しい話題について話しましょう！")
+        )
+    else:
+        # LINEに応答メッセージを送信
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text = answer)
+        )
+        
+
+def update_history(history, user_id, conversation_id):
+    new_conversation = False
+    
+    # 既存のデータを検索
+    existing_data = next((item for item in history if item["user"] == user_id), None)
+    
+    # 既存のデータがある場合は更新
+    if existing_data:
+        for entry in history:
+            if entry["user"] == user_id:
+                entry["num"] += 1
+                
+                if entry["num"] > 30:
+                    print("new conversation")
+                    entry["num"] = 1
+                    entry["id"] = ""
+                    new_conversation = True
+                else:
+                    entry["id"] = conversation_id
+                break
+    # 既存のデータがない場合は新規追加
+    else:
+        history.append({"user": user_id, "id": conversation_id, "num": 1})
+        
+    return history, new_conversation
+    
+
 
 if __name__ == "__main__":
     app.run()
