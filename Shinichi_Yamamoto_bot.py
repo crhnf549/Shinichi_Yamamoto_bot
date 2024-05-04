@@ -1,7 +1,8 @@
 import requests
 import json
+import os
 
-api_key = 'DIFY_API_KEY'  # APIキーを設定してください
+api_key = os.getenv('DIFY_API_KEY') 
 headers = {
     'Authorization': f'Bearer {api_key}',
     'Content-Type': 'application/json',
