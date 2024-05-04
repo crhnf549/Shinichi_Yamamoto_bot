@@ -24,7 +24,7 @@ def chat(query):
         ]
     }
 
-    response = requests.post('http://localhost/v1/chat-messages', headers=headers, json=data)
+    response = requests.post('http://52.195.234.150/v1/chat-message', headers=headers, json=data)
 
     # JSON文字列をPython辞書に変換
     res_text = json.loads(response.text)
