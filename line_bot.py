@@ -21,6 +21,14 @@ history = []
 scheduler = BackgroundScheduler()
 every_minites_scheduler = BackgroundScheduler()
 
+# ジョブをスケジュールする
+every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
+scheduler.add_job(send_message, 'cron', hour=9)
+
+# スケジューラーを開始
+scheduler.start()
+every_minites_scheduler.start()
+
 @app.route("/", methods=['POST'])
 def callback():
     # X-Line-Signatureヘッダーから署名を取得
@@ -109,11 +117,4 @@ def every_minites_task():
     print("現在時刻 ", local_time)
 
 if __name__ == "__main__":
-    # ジョブをスケジュールする
-    every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
-    scheduler.add_job(send_message, 'cron', hour=9)
-    
-    # スケジューラーを開始
-    scheduler.start()
-    every_minites_scheduler.start()
     app.run()
