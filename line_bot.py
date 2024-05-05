@@ -1,9 +1,8 @@
 import os
 import time
 from flask import Flask, request, abort
-from linebot import (
-    LineBotApi, WebhookHandler
-)
+from linebot import LineBotApi
+from linebot.v3.webhook import WebhookHandler
 from linebot.exceptions import (
     InvalidSignatureError
 )
