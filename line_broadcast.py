@@ -16,21 +16,20 @@ line_bot_api = MessagingApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 configuration = Configuration(access_token = os.getenv('CHANNEL_ACCESS_TOKEN'))
 scheduler = BackgroundScheduler()
 
-message_dict = {
-    'to': USER_ID,
-    'messages': [
-        {
-            'type': 'text',
-            'text': 'テストメッセージ'
-        },
-    ]
-}
-
 # 毎日特定の時間に実行されるジョブ
 def send_message():
     answer, id = chat("大聖人の御書や、御聖訓、偉人の言葉を一つだけ引用し、あなたの解釈とともに、励ましの言葉を書いて。絶対にすべて日本語で書くこと。", "crhnf549", "")
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
+    message_dict = {
+        'to': USER_ID,
+        'messages': [
+            {
+                'type': 'text',
+                'text': everyday_words
+            },
+        ]
+    }
     #line_bot_api.broadcast(TextSendMessage(text=everyday_words))
     #line_bot_api.push_message("U812711723bfbfcd7047ba3d7bd89e717", TextSendMessage(text="テスト中"))
     with ApiClient(configuration) as api_client:
