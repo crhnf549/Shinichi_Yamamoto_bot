@@ -35,5 +35,5 @@ def chat(query, user_id, conversation_id):
     #print(metadata)
     
     # 'answer'キーの値を取得して表示
-    print(answer, conversation_id)
+    #print(answer, conversation_id)
     return answer, conversation_id
