@@ -9,7 +9,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-
+from apscheduler.schedulers.background import BackgroundScheduler
 from Shinichi_Yamamoto_bot import chat
 
 app = Flask(__name__)
