@@ -1,7 +1,7 @@
 import os
 import time
 from flask import Flask, request, abort
-from linebot import LineBotApi
+from linebot.v3.messaging import MessagingApi
 from linebot.v3.webhook import WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
@@ -10,7 +10,7 @@ from Shinichi_Yamamoto_bot import chat
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
+line_bot_api = MessagingApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
