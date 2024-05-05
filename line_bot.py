@@ -17,6 +17,7 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
+scheduler = BackgroundScheduler()
 
 @app.route("/", methods=['POST'])
 def callback():
@@ -49,7 +50,8 @@ def handle_message(event):
     existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
     
     answer, conversation_id = chat(user_message, user_id, existing_data["id"])
-
+    print(f"Bot:{answer}\n", f"Conversation ID:{conversation_id}")
+    
     history, new_conversation = update_history(history, user_id, conversation_id)
     
     if new_conversation:
@@ -92,7 +94,19 @@ def update_history(history, user_id, conversation_id):
         
     return history, new_conversation
     
+# 毎日特定の時間に実行されるジョブ
+def send_message():
+    answer, id = chat("頑張っている人へ。応援、励まし、激励、歓喜の一言をお願いします。", "crhnf549", "")
+    everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
+    print(everyday_words)
+    line_bot_api.broadcast(TextSendMessage(text=everyday_words))
 
 
 if __name__ == "__main__":
+    # ジョブをスケジュールする
+    #scheduler.add_job(send_message, 'cron', minute='*')
+    scheduler.add_job(send_message, 'cron', hour=9)
+    
+    # スケジューラーを開始
+    scheduler.start()
     app.run()
