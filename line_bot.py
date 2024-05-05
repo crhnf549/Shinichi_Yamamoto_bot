@@ -1,14 +1,9 @@
 import os
 import time
 from flask import Flask, request, abort
-from linebot import LineBotApi
-from linebot.v3.webhook import WebhookHandler
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-)
+from linebot.v3.webhook import (LineBotApi, WebhookHandler)
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 from apscheduler.schedulers.background import BackgroundScheduler
 from Shinichi_Yamamoto_bot import chat
 
