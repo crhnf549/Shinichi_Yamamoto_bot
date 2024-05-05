@@ -1,4 +1,5 @@
 import time
+import os
 from linebot.v3.messaging import MessagingApi
 from linebot.models import TextSendMessage
 from apscheduler.schedulers.background import BackgroundScheduler
