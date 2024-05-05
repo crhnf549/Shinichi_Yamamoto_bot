@@ -111,4 +111,4 @@ if __name__ == "__main__":
     # スケジューラーを開始
     scheduler.start()
     
-    #app.run()
+    app.run()
