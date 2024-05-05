@@ -19,7 +19,6 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
-every_minites_scheduler = BackgroundScheduler()
 
 @app.route("/", methods=['POST'])
 def callback():
@@ -110,10 +109,11 @@ def every_minites_task():
     
 if __name__ == "__main__":
     # ジョブをスケジュールする
-    every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
+    #scheduler.add_job(send_message, 'cron', minute='*')
+    scheduler.add_job(every_minites_task, 'cron', minute='*')
     scheduler.add_job(send_message, 'cron', hour=9)
-    
+
     # スケジューラーを開始
     scheduler.start()
-    every_minites_scheduler.start()
-    app.run()
+    
+    #app.run()
