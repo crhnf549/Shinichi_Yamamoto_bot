@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
@@ -18,6 +19,7 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
+every_minites_scheduler = BackgroundScheduler()
 
 @app.route("/", methods=['POST'])
 def callback():
@@ -96,17 +98,22 @@ def update_history(history, user_id, conversation_id):
     
 # 毎日特定の時間に実行されるジョブ
 def send_message():
-    answer, id = chat("頑張っている人へ。応援、励まし、激励、歓喜の一言をお願いします。", "crhnf549", "")
+    answer, id = chat("応援、励まし、激励、名言、思い出の一言をお願いします。", "crhnf549", "")
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
     line_bot_api.broadcast(TextSendMessage(text=everyday_words))
-
+    
+def every_minites_task():
+    current_time = time.time()
+    local_time = time.ctime(current_time)
+    print("現在時刻 ", local_time)
 
 if __name__ == "__main__":
     # ジョブをスケジュールする
-    #scheduler.add_job(send_message, 'cron', minute='*')
+    every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
     scheduler.add_job(send_message, 'cron', hour=9)
     
     # スケジューラーを開始
     scheduler.start()
+    every_minites_scheduler.start()
     app.run()
