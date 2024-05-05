@@ -20,7 +20,7 @@ def send_message():
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
     #line_bot_api.broadcast(TextSendMessage(text=everyday_words))
-    line_bot_api.push_message("U812711723bfbfcd7047ba3d7bd89e717", text=everyday_words)
+    line_bot_api.push_message("U812711723bfbfcd7047ba3d7bd89e717", TextSendMessage(text=everyday_words))
 
 def every_minites_task():
     current_time = time.time()
