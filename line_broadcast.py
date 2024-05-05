@@ -4,7 +4,7 @@ from linebot.models import TextSendMessage
 from apscheduler.schedulers.background import BackgroundScheduler
 from Shinichi_Yamamoto_bot import chat
 
-line_bot_api = MessagingApi('')
+line_bot_api = MessagingApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 scheduler = BackgroundScheduler()
 
 # 毎日特定の時間に実行されるジョブ
