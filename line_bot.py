@@ -107,12 +107,13 @@ def every_minites_task():
     current_time = time.time()
     local_time = time.ctime(current_time)
     print("現在時刻 ", local_time)
-
-# ジョブをスケジュールする
-every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
-scheduler.add_job(send_message, 'cron', hour=9)
-
-# スケジューラーを開始
-scheduler.start()
-every_minites_scheduler.start()
-app.run()
+    
+if __name__ == "__main__":
+    # ジョブをスケジュールする
+    every_minites_scheduler.add_job(every_minites_task, 'cron', minute='*')
+    scheduler.add_job(send_message, 'cron', hour=9)
+    
+    # スケジューラーを開始
+    scheduler.start()
+    every_minites_scheduler.start()
+    app.run()
