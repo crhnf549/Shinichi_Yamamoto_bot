@@ -1,5 +1,5 @@
 import os
-import time
+from datetime import datetime
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 #from linebot.v3.messaging import MessagingApi
@@ -16,11 +16,22 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
+last_execution_date = None
 
 @app.route("/", methods=['POST', 'HEAD'])
 def callback():
+    global last_execution_date
+    # 現在の日付を取得
+    current_date = datetime.now().date()
     # HEADリクエストの場合は何もしない
     if request.method == 'HEAD':
+        # 前回の実行日と現在の日付を比較
+        if last_execution_date is None or last_execution_date < current_date:
+            # 日付が変わっていたら特定の処理を実行
+            # ここに必要な処理を記述
+            send_message()
+        # 最後に実行日を更新
+        last_execution_date = current_date
         return 'OK'
     else:
         # X-Line-Signatureヘッダーから署名を取得
@@ -104,17 +115,17 @@ def send_message():
     line_bot_api.broadcast(TextSendMessage(text=everyday_words))
     
 def every_minites_task():
-    current_time = time.time()
-    local_time = time.ctime(current_time)
-    print("現在時刻 ", local_time)
+    #current_time = time.time()
+    #local_time = time.ctime(current_time)
+    #print("現在時刻 ", local_time)
     
 if __name__ == "__main__":
     # ジョブをスケジュールする
     #scheduler.add_job(send_message, 'cron', minute='*')
-    scheduler.add_job(every_minites_task, 'cron', minute='*')
-    scheduler.add_job(send_message, 'cron', hour=9)
+    #scheduler.add_job(every_minites_task, 'cron', minute='*')
+    #scheduler.add_job(send_message, 'cron', hour=9)
 
     # スケジューラーを開始
-    scheduler.start()
+    #scheduler.start()
     
     #app.run()
