@@ -32,11 +32,11 @@ def chat(query, user_id, conversation_id):
     except requests.exceptions.HTTPError as http_err:
         # HTTPエラーが発生した場合、ここで処理します
         print(f'HTTP error occurred: {http_err}')  # Python 3.6以上が必要
-        answer = "サーバーエラーが発生しました。"
+        answer = "チャットボットに接続できませんでした。申し訳ありませんが対応をお待ちください。"
     except Exception as err:
         # その他のエラーが発生した場合、ここで処理します
         print(f'Other error occurred: {err}')
-        answer = "サーバーエラーが発生しました。"
+        answer = "サーバーエラーが発生しました。申し訳ありませんが対応をお待ちください。"
     else:
         # レスポンスが成功した場合の処理をここに書きます
       
