@@ -22,7 +22,7 @@ def send_message():
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
     message_dict = {
-        #'to': USER_ID,
+        'to': USER_ID,
         'messages': [
             {
                 'type': 'text',
@@ -32,7 +32,7 @@ def send_message():
     }
     #line_bot_api.broadcast(TextSendMessage(text=everyday_words))
     #line_bot_api.push_message("U812711723bfbfcd7047ba3d7bd89e717", TextSendMessage(text="テスト中"))
-    '''
+    
     with ApiClient(configuration) as api_client:
         # Create an instance of the API class
         line_bot_api = MessagingApi(api_client)
@@ -52,6 +52,7 @@ def send_message():
             print(f'The response of MessagingApi->broadcast_message status code => {broadcast_message_result.status_code}')
         except ApiException as e:
             print('Exception when calling MessagingApi->broadcast_message: %s\n' % e)
+    '''
 
 
 def every_minites_task():
@@ -61,9 +62,9 @@ def every_minites_task():
 
 if __name__ == "__main__":
     # ジョブをスケジュールする
-    #scheduler.add_job(send_message, 'cron', minute='*')
-    scheduler.add_job(every_minites_task, 'cron', minute='*')
-    scheduler.add_job(send_message, 'cron', hour=0)
+    scheduler.add_job(send_message, 'cron', hour='*')
+    #scheduler.add_job(every_minites_task, 'cron', minute='*')
+    #scheduler.add_job(send_message, 'cron', hour=0)
 
     # スケジューラーを開始
     scheduler.start()
