@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 #from linebot.v3.messaging import MessagingApi
@@ -16,7 +16,7 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
-last_execution_date = None
+last_execution_date = datetime.now().date() + timedelta(days=1)
 
 @app.route("/", methods=['POST', 'HEAD'])
 def callback():
@@ -28,13 +28,13 @@ def callback():
         # 前回の実行日と現在の日付を比較
         if last_execution_date is None:
             print("現在時刻", datetime.now())
-            pass
+            
         elif last_execution_date < current_date:
             # 日付が変わっていたら特定の処理を実行
             # ここに必要な処理を記述
             send_message()
         # 最後に実行日を更新
-        last_execution_date = current_date
+        last_execution_date = current_date 
         
     else:
         # X-Line-Signatureヘッダーから署名を取得
