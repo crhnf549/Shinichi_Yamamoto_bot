@@ -33,8 +33,8 @@ def callback():
             # 日付が変わっていたら特定の処理を実行
             # ここに必要な処理を記述
             send_message()
-        # 最後に実行日を更新
-        last_execution_date = current_date 
+            # 最後に実行日を更新
+            last_execution_date = current_date
         
     else:
         # X-Line-Signatureヘッダーから署名を取得
