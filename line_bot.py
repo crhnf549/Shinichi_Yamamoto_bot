@@ -17,7 +17,7 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
 
-@app.route("/", methods=['POST'])
+@app.route("/")
 def callback():
     # X-Line-Signatureヘッダーから署名を取得
     signature = request.headers['X-Line-Signature']
