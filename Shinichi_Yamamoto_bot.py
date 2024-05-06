@@ -25,15 +25,23 @@ def chat(query, user_id, conversation_id):
     }
 
     response = requests.post('http://18.177.137.163/v1/chat-messages', headers=headers, json=data)
-    #print(response.text)
-    
-    # JSON文字列をPython辞書に変換
-    res_text = json.loads(response.text)
-    conversation_id = res_text["conversation_id"]
-    answer = res_text["answer"]
-    #metadata = conversation_id = res_text["metadata"]
-    #print(metadata)
-    
-    # 'answer'キーの値を取得して表示
-    #print(answer, conversation_id)
+
+    try:
+        # 成功したレスポンスのステータスコードは200から299の間です
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        # HTTPエラーが発生した場合、ここで処理します
+        print(f'HTTP error occurred: {http_err}')  # Python 3.6以上が必要
+        answer = "サーバーエラーが発生しました。"
+    except Exception as err:
+        # その他のエラーが発生した場合、ここで処理します
+        print(f'Other error occurred: {err}')
+        answer = "サーバーエラーが発生しました。"
+    else:
+        # レスポンスが成功した場合の処理をここに書きます
+      
+        # JSON文字列をPython辞書に変換
+        res_text = json.loads(response.text)
+        conversation_id = res_text["conversation_id"]
+        answer = res_text["answer"]
     return answer, conversation_id
