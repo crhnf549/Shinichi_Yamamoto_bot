@@ -17,22 +17,26 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
 scheduler = BackgroundScheduler()
 
-@app.route("/")
+@app.route("/", methods=['POST', 'HEAD'])
 def callback():
-    # X-Line-Signatureヘッダーから署名を取得
-    signature = request.headers['X-Line-Signature']
-
-    # リクエストボディをテキストとして取得
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-
-    # 署名を検証し、イベントを処理
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-
-    return 'OK'
+    # HEADリクエストの場合は何もしない
+    if request.method == 'HEAD':
+        return 'OK'
+    else:
+        # X-Line-Signatureヘッダーから署名を取得
+        signature = request.headers['X-Line-Signature']
+    
+        # リクエストボディをテキストとして取得
+        body = request.get_data(as_text=True)
+        app.logger.info("Request body: " + body)
+        
+        # 署名を検証し、イベントを処理
+        try:
+            handler.handle(body, signature)
+        except InvalidSignatureError:
+            abort(400)
+    
+        return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
