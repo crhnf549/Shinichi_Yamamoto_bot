@@ -26,13 +26,16 @@ def callback():
     # HEADリクエストの場合は何もしない
     if request.method == 'HEAD':
         # 前回の実行日と現在の日付を比較
-        if last_execution_date is None or last_execution_date < current_date:
+        if last_execution_date is None:
+            print("現在時刻", datetime.now())
+            pass
+        elif last_execution_date < current_date:
             # 日付が変わっていたら特定の処理を実行
             # ここに必要な処理を記述
             send_message()
         # 最後に実行日を更新
         last_execution_date = current_date
-        return 'OK'
+        
     else:
         # X-Line-Signatureヘッダーから署名を取得
         signature = request.headers['X-Line-Signature']
@@ -47,7 +50,7 @@ def callback():
         except InvalidSignatureError:
             abort(400)
     
-        return 'OK'
+    return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
