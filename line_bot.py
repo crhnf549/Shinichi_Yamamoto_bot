@@ -26,7 +26,7 @@ def callback():
     # HEADリクエストの場合は何もしない
     if request.method == 'HEAD':
         # 前回の実行日と現在の日付を比較
-        if last_execution_date is None:
+        if last_execution_date >= current_date:
             print("現在時刻", datetime.now())
             
         elif last_execution_date < current_date:
