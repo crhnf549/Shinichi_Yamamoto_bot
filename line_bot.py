@@ -118,6 +118,7 @@ def every_minites_task():
     #current_time = time.time()
     #local_time = time.ctime(current_time)
     #print("現在時刻 ", local_time)
+    pass
     
 if __name__ == "__main__":
     # ジョブをスケジュールする
