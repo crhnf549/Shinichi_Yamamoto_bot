@@ -24,7 +24,7 @@ def chat(query, user_id, conversation_id):
         ]
     }
 
-    response = requests.post('http://18.177.137.163/v1/chat-messages', headers=headers, json=data)
+    response = requests.post('https://api.dify.ai/v1/chat-messages', headers=headers, json=data)
 
     try:
         # 成功したレスポンスのステータスコードは200から299の間です
