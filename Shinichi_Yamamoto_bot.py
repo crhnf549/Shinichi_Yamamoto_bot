@@ -24,7 +24,7 @@ def chat(query, user_id, conversation_id):
         ]
     }
 
-    response = requests.post('https://api.dify.ai/v1/chat-messages', headers=headers, json=data, timeout=10)
+    response = requests.post('https://api.dify.ai/v1/chat-messages', headers=headers, json=data)
 
     try:
         # 成功したレスポンスのステータスコードは200から299の間です
@@ -32,11 +32,11 @@ def chat(query, user_id, conversation_id):
     except requests.exceptions.HTTPError as http_err:
         # HTTPエラーが発生した場合、ここで処理します
         print(f'HTTP error occurred: {http_err}')  # Python 3.6以上が必要
-        answer = "チャットボットに接続できませんでした。申し訳ありませんが対応をお待ちください。"
+        answer = "現在会合中のため返事ができません。数分経ってから改めてお試しください。"
     except Exception as err:
         # その他のエラーが発生した場合、ここで処理します
         print(f'Other error occurred: {err}')
-        answer = "サーバーエラーが発生しました。申し訳ありませんが対応をお待ちください。"
+        answer = "現在座談会のため返事ができません。数分経ってから改めてお試しください。"
     else:
         # レスポンスが成功した場合の処理をここに書きます
       
