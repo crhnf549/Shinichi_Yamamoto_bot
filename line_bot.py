@@ -18,6 +18,35 @@ history = []
 scheduler = BackgroundScheduler()
 last_execution_date = datetime.now().date() + timedelta(days=1)
 
+from queue import Queue
+from threading import Thread
+import time
+
+# リクエストを保持するキューを作成
+request_queue = Queue()
+# リクエストを処理するスレッドを作成
+worker_thread = Thread(target = process_request)
+# デーモンスレッドに設定（メインスレッドが終了したら自動的に終了）
+worker_thread.daemon = True
+# スレッドを開始
+worker_thread.start()
+
+def process_request():
+    while True:
+        # キューからリクエストを取得（キューが空の場合は待機）
+        body, signature = request_queue.get()
+        try:
+            # リクエストを処理
+            handler.handle(body, signature)
+            print(f"Processed request. Remaining requests in queue: {request_queue.qsize()}")
+        except InvalidSignatureError:
+            print("Invalid signature")
+        finally:
+            # タスクが完了したことをキューに通知
+            request_queue.task_done()
+        # ここで少し待機
+        time.sleep(1)
+
 @app.route("/", methods=['POST', 'HEAD'])
 def callback():
     global last_execution_date
@@ -43,12 +72,17 @@ def callback():
         # リクエストボディをテキストとして取得
         body = request.get_data(as_text=True)
         app.logger.info("Request body: " + body)
-        
+
+        # リクエストをキューに追加
+        request_queue.put((body, signature))
+
+        '''
         # 署名を検証し、イベントを処理
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
             abort(400)
+        '''
     
     return 'OK'
 
