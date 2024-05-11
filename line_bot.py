@@ -24,12 +24,7 @@ import time
 
 # リクエストを保持するキューを作成
 request_queue = Queue()
-# リクエストを処理するスレッドを作成
-worker_thread = Thread(target = process_request)
-# デーモンスレッドに設定（メインスレッドが終了したら自動的に終了）
-worker_thread.daemon = True
-# スレッドを開始
-worker_thread.start()
+
 
 def process_request():
     while True:
@@ -165,5 +160,12 @@ if __name__ == "__main__":
 
     # スケジューラーを開始
     #scheduler.start()
+
+    # リクエストを処理するスレッドを作成
+    worker_thread = Thread(target = process_request)
+    # デーモンスレッドに設定（メインスレッドが終了したら自動的に終了）
+    worker_thread.daemon = True
+    # スレッドを開始
+    worker_thread.start()
     
     app.run()
