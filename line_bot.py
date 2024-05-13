@@ -55,7 +55,6 @@ def callback():
             
         elif last_execution_date < current_date:
             # 日付が変わっていたら特定の処理を実行
-            # ここに必要な処理を記述
             send_message()
             # 最後に実行日を更新
             last_execution_date = current_date
@@ -69,15 +68,15 @@ def callback():
         app.logger.info("Request body: " + body)
 
         # リクエストをキューに追加
-        request_queue.put((body, signature))
+        #request_queue.put((body, signature))
 
-        '''
+        
         # 署名を検証し、イベントを処理
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
             abort(400)
-        '''
+        
     
     return 'OK'
 
@@ -162,10 +161,10 @@ if __name__ == "__main__":
     #scheduler.start()
 
     # リクエストを処理するスレッドを作成
-    worker_thread = Thread(target = process_request)
+    #worker_thread = Thread(target = process_request)
     # デーモンスレッドに設定（メインスレッドが終了したら自動的に終了）
-    worker_thread.daemon = True
+    #worker_thread.daemon = True
     # スレッドを開始
-    worker_thread.start()
+    #worker_thread.start()
     
     app.run()
