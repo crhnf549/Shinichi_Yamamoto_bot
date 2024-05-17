@@ -28,7 +28,7 @@ def chat(query):
             #print(content)
         try:    
             response = model.generate_content(
-                prompt + f"\n\n質問:{query}\n\n" + f"小説「新・人間革命」:なし",
+                prompt + f"\n\n質問:{query}\n\n" + f"小説「新・人間革命」:{content}",
                 request_options={"timeout": 600},
                 safety_settings=safety_settings,
             )
