@@ -42,7 +42,7 @@ def callback():
     current_date = datetime.now().date()
     # HEADリクエストの場合は何もしない
     if request.method == 'HEAD':
-        process_request()
+        #process_request()
         # 前回の実行日と現在の日付を比較
         if last_execution_date >= current_date:
             print("現在時刻", datetime.now())
@@ -62,15 +62,15 @@ def callback():
         app.logger.info("Request body: " + body)
 
         # リクエストをキューに追加
-        request_queue.put((body, signature))
-        process_request()
-        '''
+        #request_queue.put((body, signature))
+        #process_request()
+        
         # 署名を検証し、イベントを処理
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
             abort(400)
-        '''
+        
         
     
     return 'OK'
