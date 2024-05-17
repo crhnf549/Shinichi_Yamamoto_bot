@@ -5,27 +5,8 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 from apscheduler.schedulers.background import BackgroundScheduler
-from dify import chat
-#from gemini import chat
-
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
-
-GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY') 
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
-safety_settings = {
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-}
-response = model.generate_content(
-    "こんにちは",
-    request_options={"timeout": 600},
-    safety_settings=safety_settings,
-)
-print(response.text)
+#from dify import chat
+from gemini import chat
 
 app = Flask(__name__)
 
@@ -89,9 +70,6 @@ def callback():
             handler.handle(body, signature)
         except InvalidSignatureError:
             abort(400)
-        
-        
-    
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -107,11 +85,11 @@ def handle_message(event):
 
     existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
     
-    answer, conversation_id = chat(user_message, user_id, existing_data["id"])
-    #answer = chat(user_message)
+    #answer, conversation_id = chat(user_message, user_id, existing_data["id"])
+    answer = chat(user_message)
     print(f"Bot: {answer}")
     #print(f"Bot: {answer}\n", f"Conversation ID: {conversation_id}")
-    '''
+    
     # LINEに応答メッセージを送信
     try:
         line_bot_api.reply_message(
@@ -137,6 +115,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text = answer)
         )
+    '''
     
         
 
