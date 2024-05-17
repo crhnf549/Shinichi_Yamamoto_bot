@@ -7,7 +7,8 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 from apscheduler.schedulers.background import BackgroundScheduler
-from Shinichi_Yamamoto_bot import chat
+#from Shinichi_Yamamoto_bot import chat
+from gemini import chat
 
 app = Flask(__name__)
 
@@ -19,7 +20,6 @@ scheduler = BackgroundScheduler()
 last_execution_date = datetime.now().date() + timedelta(days=1)
 
 from queue import Queue
-from threading import Thread
 import time
 
 # リクエストを保持するキューを作成
@@ -27,20 +27,17 @@ request_queue = Queue()
 
 
 def process_request():
-    while True:
-        # キューからリクエストを取得（キューが空の場合は待機）
-        body, signature = request_queue.get()
-        try:
-            # リクエストを処理
-            handler.handle(body, signature)
-            print(f"Processed request. Remaining requests in queue: {request_queue.qsize()}")
-        except InvalidSignatureError:
-            print("Invalid signature")
-        finally:
-            # タスクが完了したことをキューに通知
-            request_queue.task_done()
-        # ここで少し待機
-        time.sleep(1)
+    # キューからリクエストを取得（キューが空の場合は待機）
+    body, signature = request_queue.get()
+    try:
+        # リクエストを処理
+        handler.handle(body, signature)
+        print(f"Processed request. Remaining requests in queue: {request_queue.qsize()}")
+    except InvalidSignatureError:
+        print("Invalid signature")
+    finally:
+        # タスクが完了したことをキューに通知
+        request_queue.task_done()
 
 @app.route("/", methods=['POST', 'HEAD'])
 def callback():
@@ -49,6 +46,7 @@ def callback():
     current_date = datetime.now().date()
     # HEADリクエストの場合は何もしない
     if request.method == 'HEAD':
+        process_request()
         # 前回の実行日と現在の日付を比較
         if last_execution_date >= current_date:
             print("現在時刻", datetime.now())
@@ -68,14 +66,15 @@ def callback():
         app.logger.info("Request body: " + body)
 
         # リクエストをキューに追加
-        #request_queue.put((body, signature))
+        request_queue.put((body, signature))
 
-        
+        '''
         # 署名を検証し、イベントを処理
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
             abort(400)
+        '''
         
     
     return 'OK'
@@ -89,13 +88,26 @@ def handle_message(event):
     
     # ユーザーIDを取得してコンソールに出力
     user_id = event.source.user_id
-    print(f"User {user_id}:", user_message)
+    print(f"User {user_id}: {user_message}")
 
-    existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
+    #existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
     
-    answer, conversation_id = chat(user_message, user_id, existing_data["id"])
-    print(f"Bot:{answer}\n", f"Conversation ID:{conversation_id}")
+    #answer, conversation_id = chat(user_message, user_id, existing_data["id"])
+    answer = chat(user_message)
+    print(f"Bot: {answer}")
+    #print(f"Bot: {answer}\n", f"Conversation ID: {conversation_id}")
     
+    # LINEに応答メッセージを送信
+    try:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text = answer)
+        )
+    except:
+        line_bot_api.push_message(user_id, TextSendMessage(text = answer))
+        print('Pushed message')
+        
+    '''
     history, new_conversation = update_history(history, user_id, conversation_id)
     
     if new_conversation:
@@ -110,14 +122,13 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text = answer)
         )
+    '''
         
 
 def update_history(history, user_id, conversation_id):
     new_conversation = False
-    
     # 既存のデータを検索
     existing_data = next((item for item in history if item["user"] == user_id), None)
-    
     # 既存のデータがある場合は更新
     if existing_data:
         for entry in history:
@@ -135,36 +146,16 @@ def update_history(history, user_id, conversation_id):
     # 既存のデータがない場合は新規追加
     else:
         history.append({"user": user_id, "id": conversation_id, "num": 1})
-        
     return history, new_conversation
     
 # 毎日特定の時間に実行されるジョブ
 def send_message():
-    answer, id = chat("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。", "crhnf549", "")
+    #answer, id = chat("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。", "crhnf549", "")
+    answer = gemini("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。")
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
     line_bot_api.broadcast(TextSendMessage(text=everyday_words))
     
-def every_minites_task():
-    #current_time = time.time()
-    #local_time = time.ctime(current_time)
-    #print("現在時刻 ", local_time)
-    pass
-    
 if __name__ == "__main__":
-    # ジョブをスケジュールする
-    #scheduler.add_job(send_message, 'cron', minute='*')
-    #scheduler.add_job(every_minites_task, 'cron', minute='*')
-    #scheduler.add_job(send_message, 'cron', hour=9)
-
-    # スケジューラーを開始
-    #scheduler.start()
-
-    # リクエストを処理するスレッドを作成
-    #worker_thread = Thread(target = process_request)
-    # デーモンスレッドに設定（メインスレッドが終了したら自動的に終了）
-    #worker_thread.daemon = True
-    # スレッドを開始
-    #worker_thread.start()
-    
-    app.run()
+    pass
+    #app.run()
