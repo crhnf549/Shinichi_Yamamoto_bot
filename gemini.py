@@ -25,6 +25,7 @@ def chat(query):
     for i in range(file_num):
         with open(f"./新・人間革命_{i + 1}.txt", 'r', encoding="UTF-8") as file:
             content = file.read()
+            print(content)
         try:    
             response = model.generate_content(
                 prompt + f"\n\n質問:{query}\n\n" + f"小説「新・人間革命」:{content}",
