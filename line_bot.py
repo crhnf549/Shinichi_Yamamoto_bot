@@ -5,8 +5,8 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 from apscheduler.schedulers.background import BackgroundScheduler
-#from dify import chat
-from gemini import chat
+from dify import chat
+#from gemini import chat
 
 app = Flask(__name__)
 
@@ -86,13 +86,13 @@ def handle_message(event):
     user_id = event.source.user_id
     print(f"User {user_id}: {user_message}")
 
-    #existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
+    existing_data = next((item for item in history if item["user"] == user_id), {"user": "crhnf549", "id": "", "num": 0})
     
-    #answer, conversation_id = chat(user_message, user_id, existing_data["id"])
-    answer = chat(user_message)
+    answer, conversation_id = chat(user_message, user_id, existing_data["id"])
+    #answer = chat(user_message)
     print(f"Bot: {answer}")
     #print(f"Bot: {answer}\n", f"Conversation ID: {conversation_id}")
-    
+    '''
     # LINEに応答メッセージを送信
     try:
         line_bot_api.reply_message(
@@ -118,7 +118,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text = answer)
         )
-    '''
+    
         
 
 def update_history(history, user_id, conversation_id):
