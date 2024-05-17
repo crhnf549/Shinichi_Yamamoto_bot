@@ -2,17 +2,14 @@ import os
 from datetime import datetime, timedelta
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
-#from linebot.v3.messaging import MessagingApi
-#from linebot.v3.webhook import WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
 from apscheduler.schedulers.background import BackgroundScheduler
-#from Shinichi_Yamamoto_bot import chat
+#from dify import chat
 from gemini import chat
 
 app = Flask(__name__)
 
-#line_bot_api = MessagingApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 history = []
@@ -24,7 +21,6 @@ import time
 
 # リクエストを保持するキューを作成
 request_queue = Queue()
-
 
 def process_request():
     # キューからリクエストを取得（キューが空の場合は待機）
