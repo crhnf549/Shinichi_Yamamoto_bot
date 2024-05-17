@@ -63,7 +63,7 @@ def callback():
 
         # リクエストをキューに追加
         request_queue.put((body, signature))
-
+        process_request()
         '''
         # 署名を検証し、イベントを処理
         try:
