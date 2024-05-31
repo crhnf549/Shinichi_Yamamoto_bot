@@ -145,11 +145,11 @@ def update_history(history, user_id, conversation_id):
     
 # 毎日特定の時間に実行されるジョブ
 def send_message():
-    #answer, id = chat("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。", "crhnf549", "")
-    answer = gemini("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。")
+    answer, id = chat("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。", "crhnf549", "")
+    #answer = gemini("応援、激励、ためになる偉人の名言、思い出の一言をお願いします。")
     everyday_words = "---今日の励ましの一言---\n" + answer + "\n\n※毎日自動配信しています。"
     print(everyday_words)
-    line_bot_api.broadcast(TextSendMessage(text=everyday_words))
+    #line_bot_api.broadcast(TextSendMessage(text=everyday_words))
     
 if __name__ == "__main__":
     pass
